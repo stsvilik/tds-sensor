@@ -1,0 +1,18 @@
+{
+    "name": "TDS Sensor Library",
+    "keywords": "tds, temperature, sensor, serial, water hardness",
+    "description": "This library is an interface to a series of TDS sensors and interface boards. The sensor is capable of measuring water hardness (TDS) in PPM and optionally a temperature of the water.",
+    "repository":
+    {
+      "type": "git",
+      "url": "https://github.com/stsvilik/tds-sensor.git"
+    },  
+    "include":
+    [
+      "*.cpp",
+      "*.h",
+      "examples"
+    ],
+    "frameworks": "arduino",
+    "platforms": "atmelavr"
+   }

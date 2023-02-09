@@ -1,0 +1,5 @@
+TdsSensor   KEYWORD1
+setup   KEYWORD2
+readSensorData  KEYWORD2
+getTds  KEYWORD2
+getTemperature  KEYWORD2
