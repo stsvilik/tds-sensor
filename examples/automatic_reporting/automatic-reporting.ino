@@ -20,22 +20,23 @@
 #include <HardwareSerial.h>
 #include <TdsSensor.h>
 
-#define TX0 17
-#define RX0 16
-
 /** Using UART 2 default pins (ESP32) */
 HardwareSerial SerialPort(2);
 TdsSensor tdsSensor(SerialPort);
 
 void setup()
 {
-    SerialPort.begin(9600, SERIAL_8N1, RX0, TX0);
+    SerialPort.begin(9600, SERIAL_8N1);
     Serial.begin(115200);
 
+    while (!SerialPort)
+    {
+        ; // wait for serial port to connect. Needed for native USB
+    }
     /**
      * Default setup will have sensor report updated values every 5 minutes automatically.
      * NOTE: WHen device is just powered on, sensor will report frequently for about a minute, but will turn to intermittent reporting shortly after.
-    */
+     */
     tdsSensor.setup();
 }
 
