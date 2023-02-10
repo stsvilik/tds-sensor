@@ -22,6 +22,18 @@
 
 #define MESSAGE_LENGTH 11
 
+enum TDS_MODE
+{
+    ACTIVE,
+    PASSIVE
+};
+
+enum TDS_PROBE
+{
+    TDS_1,
+    TDS_2
+};
+
 class TdsSensor
 {
 private:
@@ -32,27 +44,16 @@ private:
 
     byte incomingMessage[MESSAGE_LENGTH];
     Stream *stream;
-    ushort _tds1 = 0;
-    ushort _tds2 = 0;
-    ushort _temperature = 0;
-    ushort _mode = ACTIVE;
+    ushort _tds1 = NULL;
+    ushort _tds2 = NULL;
+    ushort _temperature = NULL;
+    TDS_MODE _mode = ACTIVE;
 
-    uint8_t generateChecksum(uint8_t *message, uint8_t length);
     void sendCommand(byte *data);
 
 public:
     TdsSensor(HardwareSerial &device) { stream = &device; };
 
-    enum TDS_MODE
-    {
-        ACTIVE,
-        PASSIVE
-    };
-    enum TDS_PROBE
-    {
-        TDS_1,
-        TDS_2
-    };
     void setup();
     void setup(TDS_MODE mode);
     byte *readSensorData();

@@ -20,23 +20,24 @@
 #include <HardwareSerial.h>
 #include <TdsSensor.h>
 
-#define TX0 17
-#define RX0 16
-
 /** Using UART 2 default pins (ESP32) */
 HardwareSerial SerialPort(2);
 TdsSensor tdsSensor(SerialPort);
 
 void setup()
 {
-    SerialPort.begin(9600, SERIAL_8N1, RX0, TX0);
+    SerialPort.begin(9600, SERIAL_8N1);
     Serial.begin(115200);
 
+    while (!SerialPort)
+    {
+        ; // wait for serial port to connect. Needed for native USB
+    }
     /**
      * Passing PASSIVE mode argument will disable automatic reporting and instead will request a report every time readSensorData() is called.
      * NOTE: To return to automatic reporting, set mode to ACTIVE.
-    */
-    tdsSensor.setup(tdsSensor.PASSIVE);
+     */
+    tdsSensor.setup(PASSIVE);
 }
 
 void loop()

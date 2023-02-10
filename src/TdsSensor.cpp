@@ -18,7 +18,7 @@
  */
 
 #if defined(ARDUINO) && ARDUINO >= 100
-	#include "Arduino.h"
+#include "Arduino.h"
 #endif
 
 #include "TdsSensor.h"
@@ -26,30 +26,32 @@
 byte MESSAGE_START = 0xAA;
 byte MESSAGE_END = 0x55;
 
-
 void TdsSensor::setup()
 {
     this->setup(ACTIVE);
 }
 
-void TdsSensor::setup(TDS_MODE mode = ACTIVE)
+void TdsSensor::setup(TDS_MODE mode)
 {
     this->_mode = mode;
     byte *setupMessage;
 
     setupMessage = mode == ACTIVE ? ENABLE_ACTIVE_REPORTING : DISABLE_ACTIVE_REPORTING;
-    uint8_t checksum = generateChecksum(setupMessage, sizeof(setupMessage));
 
     this->sendCommand(setupMessage);
 }
 
 byte *TdsSensor::readSensorData()
 {
+    this->_tds1 = NULL;
+    this->_tds2 = NULL;
+    this->_temperature = NULL;
+
     if (this->_mode == PASSIVE)
     {
         /**
          * If active reporting is off, send manual report request and wait for response
-        */
+         */
         this->sendCommand(REQUEST_REPORT);
 
         while (!stream->available())
@@ -62,6 +64,7 @@ byte *TdsSensor::readSensorData()
         if (stream->peek() != MESSAGE_START)
         {
             (void)stream->read();
+
             return nullptr;
         }
 
@@ -69,10 +72,10 @@ byte *TdsSensor::readSensorData()
 
         if (incomingMessage[MESSAGE_LENGTH - 1] == MESSAGE_END)
         {
-            _tds1 = ((uint16_t)incomingMessage[4] << 8) | incomingMessage[5];
-            _tds2 = ((uint16_t)incomingMessage[6] << 8) | incomingMessage[7];
+            this->_tds1 = ((uint16_t)incomingMessage[4] << 8) | incomingMessage[5];
+            this->_tds2 = ((uint16_t)incomingMessage[6] << 8) | incomingMessage[7];
 
-            _temperature = incomingMessage[8];
+            this->_temperature = incomingMessage[8];
 
             return incomingMessage;
         }
@@ -83,43 +86,20 @@ byte *TdsSensor::readSensorData()
 
 ushort TdsSensor::getTds()
 {
-    return _tds1;
+    return this->_tds1;
 }
 
 ushort TdsSensor::getTds(TDS_PROBE probe)
 {
-    return probe == TDS_2 ? _tds2 : _tds1;
+    return probe == TDS_2 ? this->_tds2 : this->_tds1;
 }
 
 ushort TdsSensor::getTemperature()
 {
-    return _temperature;
-}
-
-uint8_t TdsSensor::generateChecksum(uint8_t *message, uint8_t length)
-{
-    uint8_t crc8;
-    uint8_t crc8_sum = 0;
-
-    while (length--)
-    {
-        crc8_sum += *message;
-        crc8_sum %= 256;
-        message++;
-    }
-
-    crc8 = ~crc8_sum + 1;
-    return crc8;
+    return this->_temperature;
 }
 
 void TdsSensor::sendCommand(byte *data)
 {
-    while (!stream)
-    {
-    }
-
-    if (stream)
-    {
-        stream->write(data, sizeof(data));
-    }
+    stream->write(data, sizeof(data));
 }

@@ -6,7 +6,7 @@ Arduino library for communicating with a TDS Sensors which feature a built-in pr
 
 There are plenty of analog TDS Sensors and their clones circulating the internet such as DFRobot / Gravity, Grove, CQRobot, etc. which supposedly work with Arduino. I found those sensors extremely unreliable and uncalibrated, also heavily reliant on flaky ADC controllers which are built into Arduino devices. Even with external/dedicated ADC the readings are not relable.
 
-If you have one of thos sensors, this library would not work for you :)
+If you have one of those sensors, this library would not work for you :)
 
 ## About this library
 
@@ -40,9 +40,6 @@ On-board TDS microcontrollers support two modes; `ACTIVE` (default) and `PASSIVE
 #include <HardwareSerial.h>
 #include <TdsSensor.h>
 
-#define TX0 17
-#define RX0 16
-
 HardwareSerial SerialPort(2);
 TdsSensor tdsSensor(SerialPort);
 
@@ -50,6 +47,11 @@ void setup()
 {
     SerialPort.begin(9600, SERIAL_8N1, RX0, TX0);
     Serial.begin(115200);
+
+    while (!SerialPort)
+    {
+        ; // wait for serial port to connect. Needed for native USB
+    }
 
     tdsSensor.setup();
 }
