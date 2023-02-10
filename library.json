@@ -1,7 +1,7 @@
 {
     "name": "TDS Sensor Library",
     "keywords": "tds, temperature, sensor, serial, water hardness",
-    "description": "This library is an interface to a series of TDS sensors and interface boards. The sensor is capable of measuring water hardness (TDS) in PPM and optionally a temperature of the water.",
+    "description": "This library is an interface to a series of TDS sensors with built-in microcontroller. The sensor microcontroller reports TDS in ppm and optionally a temperature of the water in celcius.",
     "repository":
     {
       "type": "git",
