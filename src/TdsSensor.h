@@ -21,6 +21,7 @@
 #define TdsSensor_h
 
 #define MESSAGE_LENGTH 11
+#define COMMAND_LENGTH 5
 
 enum TDS_MODE
 {
@@ -38,9 +39,9 @@ class TdsSensor
 {
 private:
     /* data */
-    byte DISABLE_ACTIVE_REPORTING[5] = {0xAA, 0x05, 0x00, 0x51, 0x55};
-    byte ENABLE_ACTIVE_REPORTING[5] = {0xAA, 0x05, 0x01, 0x50, 0x55};
-    byte REQUEST_REPORT[5] = {0xAA, 0x05, 0x02, 0x4F, 0x55};
+    byte DISABLE_ACTIVE_REPORTING[COMMAND_LENGTH] = {0xAA, 0x05, 0x00, 0x51, 0x55};
+    byte ENABLE_ACTIVE_REPORTING[COMMAND_LENGTH] = {0xAA, 0x05, 0x01, 0x50, 0x55};
+    byte REQUEST_REPORT[COMMAND_LENGTH] = {0xAA, 0x05, 0x02, 0x4F, 0x55};
 
     byte receivedData[MESSAGE_LENGTH];
     boolean newData = false;
