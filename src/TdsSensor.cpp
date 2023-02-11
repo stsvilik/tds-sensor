@@ -53,10 +53,6 @@ byte *TdsSensor::readSensorData()
          * If active reporting is off, send manual report request and wait for response
          */
         this->sendCommand(REQUEST_REPORT);
-
-        while (!stream->available())
-        {
-        }
     }
 
     this->readStartToTheEnd();
