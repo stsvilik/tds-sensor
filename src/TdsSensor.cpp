@@ -71,6 +71,11 @@ byte *TdsSensor::readSensorData()
 
 ushort TdsSensor::getTds()
 {
+    if (receivedData == nullptr)
+    {
+        return NULL;
+    }
+
     _tds1 = ((uint16_t)receivedData[4] << 8) | receivedData[5];
 
     return _tds1;
@@ -78,6 +83,11 @@ ushort TdsSensor::getTds()
 
 ushort TdsSensor::getTds(TDS_PROBE probe)
 {
+    if (receivedData == nullptr)
+    {
+        return NULL;
+    }
+
     _tds1 = ((uint16_t)receivedData[4] << 8) | receivedData[5];
     _tds2 = ((uint16_t)receivedData[6] << 8) | receivedData[7];
 
@@ -86,6 +96,11 @@ ushort TdsSensor::getTds(TDS_PROBE probe)
 
 ushort TdsSensor::getTemperature()
 {
+    if (receivedData == nullptr)
+    {
+        return NULL;
+    }
+    
     _temperature = receivedData[8];
 
     return _temperature;
@@ -93,11 +108,14 @@ ushort TdsSensor::getTemperature()
 
 void TdsSensor::sendCommand(byte *data)
 {
-    if(stream->availableForWrite() >= sizeof(data)) {
-        stream->write(data, sizeof(data));
-    } else {
+    if (stream->availableForWrite() >= COMMAND_LENGTH)
+    {
+        stream->write(data, COMMAND_LENGTH);
+    }
+    else
+    {
         stream->flush();
-        stream->write(data, sizeof(data));
+        stream->write(data, COMMAND_LENGTH);
     }
 }
 
