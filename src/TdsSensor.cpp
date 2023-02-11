@@ -25,6 +25,8 @@
 
 byte MESSAGE_START = 0xAA;
 byte MESSAGE_END = 0x55;
+boolean newData = false;
+byte receivedData[MESSAGE_LENGTH];
 
 void TdsSensor::setup()
 {
@@ -59,47 +61,82 @@ byte *TdsSensor::readSensorData()
         }
     }
 
-    if (stream->available())
+    this->readStartToTheEnd();
+
+    if (newData == true)
     {
-        if (stream->peek() != MESSAGE_START)
-        {
-            (void)stream->read();
-
-            return nullptr;
-        }
-
-        stream->readBytes(incomingMessage, MESSAGE_LENGTH);
-
-        if (incomingMessage[MESSAGE_LENGTH - 1] == MESSAGE_END)
-        {
-            this->_tds1 = ((uint16_t)incomingMessage[4] << 8) | incomingMessage[5];
-            this->_tds2 = ((uint16_t)incomingMessage[6] << 8) | incomingMessage[7];
-
-            this->_temperature = incomingMessage[8];
-
-            return incomingMessage;
-        }
+        newData = false;
     }
 
-    return nullptr;
+    return receivedData;
 }
 
 ushort TdsSensor::getTds()
 {
+    this->_tds1 = ((uint16_t)receivedData[4] << 8) | receivedData[5];
+
     return this->_tds1;
 }
 
 ushort TdsSensor::getTds(TDS_PROBE probe)
 {
+    this->_tds1 = ((uint16_t)receivedData[4] << 8) | receivedData[5];
+    this->_tds2 = ((uint16_t)receivedData[6] << 8) | receivedData[7];
+
     return probe == TDS_2 ? this->_tds2 : this->_tds1;
 }
 
 ushort TdsSensor::getTemperature()
 {
+    this->_temperature = receivedData[8];
+
     return this->_temperature;
 }
 
 void TdsSensor::sendCommand(byte *data)
 {
-    stream->write(data, sizeof(data));
+    if(stream->availableForWrite() >= sizeof(data)) {
+        stream->write(data, sizeof(data));
+    } else {
+        stream->flush();
+        stream->write(data, sizeof(data));
+    }
+}
+
+void TdsSensor::readStartToTheEnd()
+{
+    static boolean recvInProgress = false;
+    static byte ndx = 0;
+    boolean foundStart = false;
+    byte rc;
+
+    while (stream->available() > 0 && newData == false)
+    {
+        rc = stream->read();
+
+        if (recvInProgress == true)
+        {
+            if (rc != MESSAGE_END)
+            {
+                receivedData[ndx++] = rc;
+                if (ndx >= MESSAGE_LENGTH)
+                {
+                    ndx = MESSAGE_LENGTH - 1;
+                }
+            }
+            else
+            {
+                receivedData[ndx] = rc;
+                recvInProgress = false;
+                ndx = 0;
+                newData = true;
+            }
+        }
+
+        else if (rc == MESSAGE_START)
+        {
+            receivedData[ndx++] = rc;
+            recvInProgress = true;
+        }
+    }
 }
