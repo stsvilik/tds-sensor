@@ -50,6 +50,7 @@ private:
     TDS_MODE _mode = ACTIVE;
 
     void sendCommand(byte *data);
+    void readStartToTheEnd();
 
 public:
     TdsSensor(HardwareSerial &device) { stream = &device; };
