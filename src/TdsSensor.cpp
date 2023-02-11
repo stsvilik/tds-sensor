@@ -23,10 +23,8 @@
 
 #include "TdsSensor.h"
 
-byte MESSAGE_START = 0xAA;
-byte MESSAGE_END = 0x55;
-boolean newData = false;
-byte receivedData[MESSAGE_LENGTH];
+const byte MESSAGE_START = 0xAA;
+const byte MESSAGE_END = 0x55;
 
 void TdsSensor::setup()
 {
@@ -35,7 +33,7 @@ void TdsSensor::setup()
 
 void TdsSensor::setup(TDS_MODE mode)
 {
-    this->_mode = mode;
+    _mode = mode;
     byte *setupMessage;
 
     setupMessage = mode == ACTIVE ? ENABLE_ACTIVE_REPORTING : DISABLE_ACTIVE_REPORTING;
@@ -45,11 +43,11 @@ void TdsSensor::setup(TDS_MODE mode)
 
 byte *TdsSensor::readSensorData()
 {
-    this->_tds1 = NULL;
-    this->_tds2 = NULL;
-    this->_temperature = NULL;
+    _tds1 = NULL;
+    _tds2 = NULL;
+    _temperature = NULL;
 
-    if (this->_mode == PASSIVE)
+    if (_mode == PASSIVE)
     {
         /**
          * If active reporting is off, send manual report request and wait for response
@@ -73,24 +71,24 @@ byte *TdsSensor::readSensorData()
 
 ushort TdsSensor::getTds()
 {
-    this->_tds1 = ((uint16_t)receivedData[4] << 8) | receivedData[5];
+    _tds1 = ((uint16_t)receivedData[4] << 8) | receivedData[5];
 
-    return this->_tds1;
+    return _tds1;
 }
 
 ushort TdsSensor::getTds(TDS_PROBE probe)
 {
-    this->_tds1 = ((uint16_t)receivedData[4] << 8) | receivedData[5];
-    this->_tds2 = ((uint16_t)receivedData[6] << 8) | receivedData[7];
+    _tds1 = ((uint16_t)receivedData[4] << 8) | receivedData[5];
+    _tds2 = ((uint16_t)receivedData[6] << 8) | receivedData[7];
 
-    return probe == TDS_2 ? this->_tds2 : this->_tds1;
+    return probe == TDS_2 ? _tds2 : _tds1;
 }
 
 ushort TdsSensor::getTemperature()
 {
-    this->_temperature = receivedData[8];
+    _temperature = receivedData[8];
 
-    return this->_temperature;
+    return _temperature;
 }
 
 void TdsSensor::sendCommand(byte *data)
