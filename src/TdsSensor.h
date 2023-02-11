@@ -42,7 +42,8 @@ private:
     byte ENABLE_ACTIVE_REPORTING[5] = {0xAA, 0x05, 0x01, 0x50, 0x55};
     byte REQUEST_REPORT[5] = {0xAA, 0x05, 0x02, 0x4F, 0x55};
 
-    byte incomingMessage[MESSAGE_LENGTH];
+    byte receivedData[MESSAGE_LENGTH];
+    boolean newData = false;
     Stream *stream;
     ushort _tds1 = NULL;
     ushort _tds2 = NULL;
