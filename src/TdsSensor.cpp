@@ -96,7 +96,7 @@ ushort TdsSensor::getTemperature()
     {
         return NULL;
     }
-    
+
     _temperature = receivedData[8];
 
     return _temperature;
@@ -104,15 +104,8 @@ ushort TdsSensor::getTemperature()
 
 void TdsSensor::sendCommand(byte *data)
 {
-    if (stream->availableForWrite() >= COMMAND_LENGTH)
-    {
-        stream->write(data, COMMAND_LENGTH);
-    }
-    else
-    {
-        stream->flush();
-        stream->write(data, COMMAND_LENGTH);
-    }
+    stream->write(data, COMMAND_LENGTH);
+    stream->flush();
 }
 
 void TdsSensor::readStartToTheEnd()
