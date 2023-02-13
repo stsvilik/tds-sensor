@@ -47,14 +47,6 @@ byte *TdsSensor::readSensorData()
     _tds2 = NULL;
     _temperature = NULL;
 
-    if (_mode == PASSIVE)
-    {
-        /**
-         * If active reporting is off, send manual report request and wait for response
-         */
-        this->sendCommand(REQUEST_REPORT);
-    }
-
     this->readStartToTheEnd();
 
     if (newData == true)
@@ -106,6 +98,17 @@ void TdsSensor::sendCommand(byte *data)
 {
     stream->write(data, COMMAND_LENGTH);
     stream->flush();
+}
+
+void TdsSensor::requestReport()
+{
+    if (_mode == PASSIVE)
+    {
+        /**
+         * If active reporting is off, send manual report request and wait for response
+         */
+        this->sendCommand(REQUEST_REPORT);
+    }
 }
 
 void TdsSensor::readStartToTheEnd()

@@ -59,6 +59,7 @@ public:
 
     void setup();
     void setup(TDS_MODE mode);
+    void requestReport();
     byte *readSensorData();
     ushort getTds();
     ushort getTds(TDS_PROBE probe);
